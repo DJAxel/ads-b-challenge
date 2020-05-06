@@ -1,148 +1,79 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
-import pandas as pd
-import plotly.graph_objs as go
+
+# from dash.dependencies import Input, Output
+# import pandas as pd
+# import plotly.graph_objs as go
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
 server = app.server
 
-################################################################################################################
-# LOAD AND PROCESS DATA
-df0 = pd.read_csv('./data/IHME_GBD_2017_HEALTH_SDG_1990_2030_SCALED_Y2018M11D08.CSV')
-loc_meta = pd.read_csv('./data/location_metadata.csv')
+colors = {
+    'background': '#FFF',
+    'text': '#000'
+}
+styles = {
+    'paragraph': {
+        'textAlign': 'left',
+        'color': colors['text'],
+    },
+    'h2': {
 
-# Indicator Value by country in wide format
-df = df0.pivot(index='location_name', columns='indicator_short', values='scaled_value')
-df = pd.merge(loc_meta, df.reset_index())
-indicators = df0.indicator_short.unique().tolist()
-indicator_key = df0.drop_duplicates('indicator_short').set_index('indicator_short')[
-    'ihme_indicator_description'].to_dict()
+    },
+}
+app.layout = html.Div(style={'backgroundColor': colors['background']}, children=[
+    html.H1(
+        children='Challenge data story',
+        style={
+            'textAlign': 'center',
+            'color': colors['text'],
+            'marginBottom': '.5rem',
+        }
+    ),
+    html.Div(children='SDG 12: sustainable consumption and production', style={
+        'textAlign': 'center',
+        'color': colors['text'],
+        'fontSize': '1.2em',
+        'marginBottom': '2rem',
+    }),
+    html.Div(
+        children=[
+            html.P(
+                children='In 2015, a set of 17 goals was set by the United Nations to be met in 2030, in order to make our planet more sustainable and a better place for us all. One of those goals was to “ensure sustainable consumption and production patterns”, meaning that governmants, civilians and the industry should become more aware of the resources used for the products and services they create and use.',
+                style=styles['paragraph'],
+            ),
+            html.P(
+                children='The main topics include water, energy and food: things we often take for granted, but might not be that accessable for developing countries and are running out if we keep using them in the current pace. This article looks for the trends from the past years and the answer to the question: are we heading towards the right direction to meet this goal?',
+                style=styles['paragraph'],
+            ),
+            html.H2(
+                children='Water',
+                style=styles['h2'],
+            ),
+            html.P(
+                children='Water is an important resource because all forms of life we know depend on it. The globe’s surface is covered in water for about 71% (United States Geological Survey, n.d.) , but of all water available, only less than 3% is fresh and drinkable. To top it off, 2.5 percenatge points of that is frozen in the artantica (United Nations, 2019). Water should therefor be used sparsely and recycled where possible.'
+            ),
 
-################################################################################################################
-
-
-top_markdown_text = '''
-### Dash Tutorial - Sustainable Development Goals
-#### Zane Rankin, 2/17/2019
-The [Institute for Health Metrics and Evaluation](http://www.healthdata.org/) publishes estimates for 41 health-related SDG indicators for 
-195 countries and territories.  
-I downloaded the [data](http://ghdx.healthdata.org/record/global-burden-disease-study-2017-gbd-2017-health-related-sustainable-development-goals-sdg) 
-for a tutorial on Medium and Github   
-**Indicators are scaled 0-100, with 0 being worst observed (e.g. highest mortality) and 100 being best.**  
-'''
-
-app.layout = html.Div([
-
-    # HEADER
-    dcc.Markdown(children=top_markdown_text),
-
-    # LEFT - CHOROPLETH MAP
-    html.Div([
-        dcc.Dropdown(
-            id='x-varname',
-            options=[{'label': i, 'value': i} for i in indicators],
-            value='SDG Index'
-        ),
-        dcc.Markdown(id='x-description'),
-        dcc.Graph(id='county-choropleth'),
-        dcc.Markdown('*Hover over map to select country for plots*'),
-
-    ], style={'float': 'left', 'width': '39%'}),
-
-    # RIGHT - SCATTERPLOT
-    html.Div([
-        dcc.Dropdown(
-            id='y-varname',
-            options=[{'label': i, 'value': i} for i in indicators],
-            value='Under-5 Mort'
-        ),
-        dcc.Markdown(id='y-description'),
-        dcc.Graph(id='scatterplot'),
-    ], style={'float': 'right', 'width': '59%'}),
-
-])
-
-
-@app.callback(
-    Output('x-description', 'children'),
-    [Input('x-varname', 'value')])
-def x_description(i):
-    return f'{indicator_key[i]}'
-
-
-@app.callback(
-    Output('y-description', 'children'),
-    [Input('y-varname', 'value')])
-def y_description(i):
-    return f'{indicator_key[i]}'
-
-
-@app.callback(
-    Output('county-choropleth', 'figure'),
-    [Input('x-varname', 'value')])
-def update_map(x_varname):
-    return dict(
-        data=[dict(
-            locations=df['ihme_loc_id'],
-            z=df[x_varname],
-            text=df['location_name'],
-            autocolorscale=False,
-            reversescale=True,
-            type='choropleth',
-        )],
-        layout=dict(
-            title=x_varname,
-            height=400,
-            margin={'l': 0, 'b': 0, 't': 40, 'r': 0},
-            geo=dict(showframe=False,
-                     projection={'type': 'Mercator'}))
-    )
-
-
-@app.callback(
-    Output('scatterplot', 'figure'),
-    [Input('x-varname', 'value'),
-     Input('y-varname', 'value'),
-     Input('county-choropleth', 'hoverData'),])
-def update_graph(x_varname, y_varname, hoverData):
-    if hoverData is None:  # Initialize before any hovering
-        location_name = 'Nigeria'
-    else:
-        location_name = hoverData['points'][0]['text']
-
-    # Make size of marker respond to map hover
-    df['size'] = 12
-    df.loc[df.location_name == location_name, 'size'] = 30
-
-    return {
-        'data': [
-            go.Scatter(
-                x=df[df['super_region_name'] == i][x_varname],
-                y=df[df['super_region_name'] == i][y_varname],
-                text=df[df['super_region_name'] == i]['location_name'],
-                mode='markers',
-                opacity=0.7,
-                marker={
-                    'size': df[df['super_region_name'] == i]['size'],
-                    'line': {'width': 0.5, 'color': 'white'}
-                },
-                name=i
-            ) for i in df.super_region_name.unique()
+            html.H2(
+                children='bibliography',
+                style=styles['h2'],
+            ),
+            html.P(
+                children='United Nations. (2019, July 23). Sustainable consumption and production. Retrieved May 4, 2020, from https://www.un.org/sustainabledevelopment/sustainable-consumption-production/'
+            ),
+            html.P(
+                children='United States Geological Survey. (n.d.). How Much Water is There on Earth? Retrieved May 4, 2020, from https://www.usgs.gov/special-topic/water-science-school/science/how-much-water-there-earth?qt-science_center_objects=0#qt-science_center_objects'
+            ),
         ],
-        'layout': go.Layout(
-            height=400,
-            xaxis={'title': x_varname},
-            yaxis={'title': y_varname},
-            margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
-            # legend={'x': 0, 'y': 1},
-            hovermode='closest'
-        )
-    }
+        style={
+            'maxWidth': '768px',
+            'margin': 'auto',
+        }
+    ),
+])
 
 if __name__ == '__main__':
     app.run_server(debug=True)
