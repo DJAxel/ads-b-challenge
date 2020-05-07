@@ -3,14 +3,20 @@ import dash_core_components as dcc
 import dash_html_components as html
 
 # from dash.dependencies import Input, Output
-# import pandas as pd
-# import plotly.graph_objs as go
+import pandas as pd
+import plotly.graph_objs as go
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
+########################### PREP ###########################
+water_data = pd.read_csv('./data/WSH_WATER_SAFELY_MANAGED,WSH_WATER_BASIC_xmart.csv')
+water_data_zero_values = water_data.notna()[u'2017; Population using at least basic drinking-water services (%); Total']
+water_data_sorted = water_data[water_data_zero_values].sort_values(by=u'2017; Population using at least basic drinking-water services (%); Total', ascending=True)
+
+########################## LAYOUT ##########################
 colors = {
     'background': '#FFF',
     'text': '#000'
@@ -20,9 +26,12 @@ styles = {
         'textAlign': 'left',
         'color': colors['text'],
     },
-    'h2': {
-
+    'textContainer': {
+        'maxWidth': '768px',
+        'margin': 'auto',
     },
+    'h2': {},
+    'h3': {},
 }
 app.layout = html.Div(style={'backgroundColor': colors['background']}, children=[
     html.H1(
@@ -56,7 +65,55 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
             html.P(
                 children='Water is an important resource because all forms of life we know depend on it. The globe’s surface is covered in water for about 71% (United States Geological Survey, n.d.) , but of all water available, only less than 3% is fresh and drinkable. To top it off, 2.5 percenatge points of that is frozen in the artantica (United Nations, 2019). Water should therefor be used sparsely and recycled where possible.'
             ),
-
+            html.H3(
+                children='Fresh drinking water',
+                style=styles['h3'],
+            ),
+            html.P(
+                children='The most important water is the water that we drink in order to keep us hydrated. “Contaminated water and poor sanitation are linked to transmission of diseases such as cholera, diarrhoea, dysentery, hepatitis A, typhoid, and polio. Absent, inadequate, or inappropriately managed water and sanitation services expose individuals to preventable health risks.” (World Health Organization: WHO, 2019)'
+            ),
+            html.P(
+                children='In the graph below are the percentage of people that had access to at least basic drinking-water services in 2017, that is “an improved drinking-water source within a round trip of 30 minutes to collect water” (World Health Organization: WHO, 2019). Most countries are doing fine, but in some countries as low as only 40% had access to these basic services. In total, 90% of the global population had access to basic drinking-water services in 2017.'
+            ),
+        ],
+        style=styles['textContainer'],
+    ),
+    dcc.Graph(
+        id='basic_drinking_water_access_2017',
+        figure={
+            'data': [
+                go.Bar(
+                    x=water_data_sorted['Country'],
+                    y=water_data_sorted[u'2017; Population using at least basic drinking-water services (%); Total'],
+                )
+            ],
+            'layout': go.Layout(
+                xaxis={'visible': False},
+                height=600,
+                annotations=[
+                    {
+                        'x': 1,
+                        'y': -0.1,
+                        'text': 'Source: WHO',
+                        'showarrow': False,
+                        'xref': 'paper',
+                        'yref': 'paper',
+                        'xanchor': 'right',
+                        'yanchor': 'auto',
+                        'xshift': 0,
+                        'yshift': 0,
+                        'font': {'size': 15},
+                    }
+                ]
+            )
+        },
+        style={
+            'width': '1160px',
+            'margin': 'auto',
+        }
+    ),
+    html.Div(
+        children=[
             html.H2(
                 children='bibliography',
                 style=styles['h2'],
@@ -68,10 +125,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
                 children='United States Geological Survey. (n.d.). How Much Water is There on Earth? Retrieved May 4, 2020, from https://www.usgs.gov/special-topic/water-science-school/science/how-much-water-there-earth?qt-science_center_objects=0#qt-science_center_objects'
             ),
         ],
-        style={
-            'maxWidth': '768px',
-            'margin': 'auto',
-        }
+        style=styles['textContainer'],
     ),
 ])
 
