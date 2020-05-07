@@ -12,9 +12,15 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 ########################### PREP ###########################
+
+# drinking water in 2017
 water_data = pd.read_csv('./data/WSH_WATER_SAFELY_MANAGED,WSH_WATER_BASIC_xmart.csv')
 water_data_zero_values = water_data.notna()[u'2017; Population using at least basic drinking-water services (%); Total']
 water_data_sorted = water_data[water_data_zero_values].sort_values(by=u'2017; Population using at least basic drinking-water services (%); Total', ascending=True)
+
+#drinking water in 2005
+water_data_zero_values_2005 = water_data.notna()[u'2017; Population using at least basic drinking-water services (%); Total']
+water_data_sorted_2005 = water_data[water_data_zero_values_2005].sort_values(by=u'2005; Population using at least basic drinking-water services (%); Total', ascending=True)
 
 ########################## LAYOUT ##########################
 colors = {
@@ -28,6 +34,10 @@ styles = {
     },
     'textContainer': {
         'maxWidth': '768px',
+        'margin': 'auto',
+    },
+    'graphs': {
+        'width': '1160px',
         'margin': 'auto',
     },
     'h2': {},
@@ -107,10 +117,54 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
                 ]
             )
         },
-        style={
-            'width': '1160px',
-            'margin': 'auto',
-        }
+        style=styles['graphs']
+    ),
+    html.Div(
+        children=[
+            html.P(
+                children='So are we on the right track? If we look at 2005, one of the first years where data from almost all countries is known, we can see that the curve used to be a lot worse with values of even around 25%.'
+            ),
+        ],
+        style=styles['textContainer'],
+    ),
+    dcc.Graph(
+        id='basic_drinking_water_access_2005',
+        figure={
+            'data': [
+                go.Bar(
+                    x=water_data_sorted_2005['Country'],
+                    y=water_data_sorted_2005[u'2005; Population using at least basic drinking-water services (%); Total'],
+                )
+            ],
+            'layout': go.Layout(
+                xaxis={'visible': False},
+                height=600,
+                annotations=[
+                    {
+                        'x': 1,
+                        'y': -0.1,
+                        'text': 'Source: WHO',
+                        'showarrow': False,
+                        'xref': 'paper',
+                        'yref': 'paper',
+                        'xanchor': 'right',
+                        'yanchor': 'auto',
+                        'xshift': 0,
+                        'yshift': 0,
+                        'font': {'size': 15},
+                    }
+                ]
+            )
+        },
+        style=styles['graphs']
+    ),
+    html.Div(
+        children=[
+            html.P(
+                children='It’s interesting to see though that the percentage of countries scoring below 80% didn’t change much, but the countries scoring the worst made a great improvement. It is nevertheless still important to provide fresh drinking water for more people.'
+            ),
+        ],
+        style=styles['textContainer'],
     ),
     html.Div(
         children=[
