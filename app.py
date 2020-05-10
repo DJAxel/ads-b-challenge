@@ -13,6 +13,10 @@ server = app.server
 
 ########################### PREP ###########################
 
+# Aanvoer, verwerking van afval bij recyclingbedrijven Nederland
+recycling_NL = pd.read_csv('./data/Aanvoer,_verwerking_van_afval_bij_recyclingbedrijven_Nederland_1996-2016.csv', sep=';')
+recycling_NL_melted = pd.melt(recycling_NL, ['Perioden'], ['Metaalafval_3', 'GlasPapierHoutKunststofED_4', 'DierlijkPlantaardigAfval_5', 'GemengdAfval_6', 'Slib_7', 'MineralenSteenachtigAfval_8', 'OverigNietChemischAfval_9', 'ChemischAfval_10'])
+
 # drinking water in 2017
 water_data = pd.read_csv('./data/WSH_WATER_SAFELY_MANAGED,WSH_WATER_BASIC_xmart.csv')
 water_data_zero_values = water_data.notna()[u'2017; Population using at least basic drinking-water services (%); Total']
@@ -69,21 +73,14 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
                 style=styles['paragraph'],
             ),
             html.H2(
-                children='Water',
+                children='Recycling',
                 style=styles['h2'],
             ),
             html.P(
-                children='Water is an important resource because all forms of life we know depend on it. The globe’s surface is covered in water for about 71% (United States Geological Survey, n.d.) , but of all water available, only less than 3% is fresh and drinkable. To top it off, 2.5 percenatge points of that is frozen in the artantica (United Nations, 2019). Water should therefor be used sparsely and recycled where possible.'
-            ),
-            html.H3(
-                children='Fresh drinking water',
-                style=styles['h3'],
+                children='So what kind of garbage is being collected and seperated and in what propotions does this happen? It’s hard to compare this over multiple countries in one graph as different countries combine different sorts of waste together. Looking at just the Netherlands we can see that the most collected category is ‘rocks and minerals’ by a long mile. The amount of metal waste is about the same as ‘glas/paper/wood/plastic’. Then at the lower end, we have animal/vegetable waste, mixed waste and   other non-chemical waste. Sludge and chemical waste have both taken a massive dive between 2006-2008 and 2012-2014 respectively. The sludge has been stable for a few years now, but it’s to soon to tell if this will be the same case for chemical waste as well.'
             ),
             html.P(
-                children='The most important water is the water that we drink in order to keep us hydrated. “Contaminated water and poor sanitation are linked to transmission of diseases such as cholera, diarrhoea, dysentery, hepatitis A, typhoid, and polio. Absent, inadequate, or inappropriately managed water and sanitation services expose individuals to preventable health risks.” (World Health Organization: WHO, 2019)'
-            ),
-            html.P(
-                children='In the graph below are the percentage of people that had access to at least basic drinking-water services in 2017, that is “an improved drinking-water source within a round trip of 30 minutes to collect water” (World Health Organization: WHO, 2019). Most countries are doing fine, but in some countries as low as only 40% had access to these basic services. In total, 90% of the global population had access to basic drinking-water services in 2017.'
+                children='Keep in mind that the following graph has a logarithmic scale due to the fact that the rocks and minerals have much higher values than the other types of waste.'
             ),
         ],
         style=styles['textContainer'],
@@ -92,19 +89,59 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
         id='basic_drinking_water_access_2017',
         figure={
             'data': [
-                go.Bar(
-                    x=water_data_sorted['Country'],
-                    y=water_data_sorted[u'2017; Population using at least basic drinking-water services (%); Total'],
-                )
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['Metaalafval_3'],
+                    name='Metal',
+                ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['GlasPapierHoutKunststofED_4'],
+                    name='Glass/paper/wood/plastic',
+                ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['DierlijkPlantaardigAfval_5'],
+                    name='Animal/vegetable',
+                ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['GemengdAfval_6'],
+                    name='Mixed',
+                ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['Slib_7'],
+                    name='Sludge',
+                ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['MineralenSteenachtigAfval_8'],
+                    name='Rocks/minerals',
+                ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['OverigNietChemischAfval_9'],
+                    name='Other not chemical',
+                ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['ChemischAfval_10'],
+                    name='Chemical',
+                ),
             ],
             'layout': go.Layout(
-                xaxis={'visible': False},
+                title='Pre-processing of waste in Dutch recycling companies',
+                xaxis={'title': 'Year', 'range': [2004, 2016]},
+                yaxis={'title': 'Supplied materials (× 1000 tonnes)'},
+                xaxis_type='category',
+                yaxis_type="log",
                 height=600,
                 annotations=[
                     {
                         'x': 1,
                         'y': -0.1,
-                        'text': 'Source: WHO',
+                        'text': 'Source: CBS',
                         'showarrow': False,
                         'xref': 'paper',
                         'yref': 'paper',
@@ -121,63 +158,6 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
     ),
     html.Div(
         children=[
-            html.P(
-                children='So are we on the right track? If we look at 2005, one of the first years where data from almost all countries is known, we can see that the curve used to be a lot worse with values of even around 25%.'
-            ),
-        ],
-        style=styles['textContainer'],
-    ),
-    dcc.Graph(
-        id='basic_drinking_water_access_2005',
-        figure={
-            'data': [
-                go.Bar(
-                    x=water_data_sorted_2005['Country'],
-                    y=water_data_sorted_2005[u'2005; Population using at least basic drinking-water services (%); Total'],
-                )
-            ],
-            'layout': go.Layout(
-                xaxis={'visible': False},
-                height=600,
-                annotations=[
-                    {
-                        'x': 1,
-                        'y': -0.1,
-                        'text': 'Source: WHO',
-                        'showarrow': False,
-                        'xref': 'paper',
-                        'yref': 'paper',
-                        'xanchor': 'right',
-                        'yanchor': 'auto',
-                        'xshift': 0,
-                        'yshift': 0,
-                        'font': {'size': 15},
-                    }
-                ]
-            )
-        },
-        style=styles['graphs']
-    ),
-    html.Div(
-        children=[
-            html.P(
-                children='It’s interesting to see though that the percentage of countries scoring below 80% didn’t change much, but the countries scoring the worst made a great improvement. It is nevertheless still important to provide fresh drinking water for more people.'
-            ),
-        ],
-        style=styles['textContainer'],
-    ),
-    html.Div(
-        children=[
-            html.H2(
-                children='bibliography',
-                style=styles['h2'],
-            ),
-            html.P(
-                children='United Nations. (2019, July 23). Sustainable consumption and production. Retrieved May 4, 2020, from https://www.un.org/sustainabledevelopment/sustainable-consumption-production/'
-            ),
-            html.P(
-                children='United States Geological Survey. (n.d.). How Much Water is There on Earth? Retrieved May 4, 2020, from https://www.usgs.gov/special-topic/water-science-school/science/how-much-water-there-earth?qt-science_center_objects=0#qt-science_center_objects'
-            ),
         ],
         style=styles['textContainer'],
     ),
