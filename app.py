@@ -17,15 +17,6 @@ server = app.server
 recycling_NL = pd.read_csv('./data/Aanvoer,_verwerking_van_afval_bij_recyclingbedrijven_Nederland_1996-2016.csv', sep=';')
 recycling_NL_melted = pd.melt(recycling_NL, ['Perioden'], ['Metaalafval_3', 'GlasPapierHoutKunststofED_4', 'DierlijkPlantaardigAfval_5', 'GemengdAfval_6', 'Slib_7', 'MineralenSteenachtigAfval_8', 'OverigNietChemischAfval_9', 'ChemischAfval_10'])
 
-# drinking water in 2017
-water_data = pd.read_csv('./data/WSH_WATER_SAFELY_MANAGED,WSH_WATER_BASIC_xmart.csv')
-water_data_zero_values = water_data.notna()[u'2017; Population using at least basic drinking-water services (%); Total']
-water_data_sorted = water_data[water_data_zero_values].sort_values(by=u'2017; Population using at least basic drinking-water services (%); Total', ascending=True)
-
-#drinking water in 2005
-water_data_zero_values_2005 = water_data.notna()[u'2017; Population using at least basic drinking-water services (%); Total']
-water_data_sorted_2005 = water_data[water_data_zero_values_2005].sort_values(by=u'2005; Population using at least basic drinking-water services (%); Total', ascending=True)
-
 ########################## LAYOUT ##########################
 colors = {
     'background': '#FFF',
