@@ -134,7 +134,6 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
                 title='Pre-processing of waste in Dutch recycling companies',
                 xaxis={'title': 'Year', 'range': [2004, 2016]},
                 yaxis={'title': 'Supplied materials (× 1000 tonnes)'},
-                yaxis_type="log",
                 height=600,
                 annotations=[
                     {
