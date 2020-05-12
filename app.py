@@ -131,7 +131,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
                 ),
             ],
             'layout': go.Layout(
-                xaxis={'visible': False},
+                title='Pre-processing of waste in Dutch recycling companies',
                 height=600,
                 annotations=[
                     {
