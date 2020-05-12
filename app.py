@@ -118,63 +118,6 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
     ),
     html.Div(
         children=[
-            html.P(
-                children='So are we on the right track? If we look at 2005, one of the first years where data from almost all countries is known, we can see that the curve used to be a lot worse with values of even around 25%.'
-            ),
-        ],
-        style=styles['textContainer'],
-    ),
-    dcc.Graph(
-        id='basic_drinking_water_access_2005',
-        figure={
-            'data': [
-                go.Bar(
-                    x=water_data_sorted_2005['Country'],
-                    y=water_data_sorted_2005[u'2005; Population using at least basic drinking-water services (%); Total'],
-                )
-            ],
-            'layout': go.Layout(
-                xaxis={'visible': False},
-                height=600,
-                annotations=[
-                    {
-                        'x': 1,
-                        'y': -0.1,
-                        'text': 'Source: WHO',
-                        'showarrow': False,
-                        'xref': 'paper',
-                        'yref': 'paper',
-                        'xanchor': 'right',
-                        'yanchor': 'auto',
-                        'xshift': 0,
-                        'yshift': 0,
-                        'font': {'size': 15},
-                    }
-                ]
-            )
-        },
-        style=styles['graphs']
-    ),
-    html.Div(
-        children=[
-            html.P(
-                children='It’s interesting to see though that the percentage of countries scoring below 80% didn’t change much, but the countries scoring the worst made a great improvement. It is nevertheless still important to provide fresh drinking water for more people.'
-            ),
-        ],
-        style=styles['textContainer'],
-    ),
-    html.Div(
-        children=[
-            html.H2(
-                children='bibliography',
-                style=styles['h2'],
-            ),
-            html.P(
-                children='United Nations. (2019, July 23). Sustainable consumption and production. Retrieved May 4, 2020, from https://www.un.org/sustainabledevelopment/sustainable-consumption-production/'
-            ),
-            html.P(
-                children='United States Geological Survey. (n.d.). How Much Water is There on Earth? Retrieved May 4, 2020, from https://www.usgs.gov/special-topic/water-science-school/science/how-much-water-there-earth?qt-science_center_objects=0#qt-science_center_objects'
-            ),
         ],
         style=styles['textContainer'],
     ),
