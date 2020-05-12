@@ -94,6 +94,41 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
                     y=recycling_NL['Metaalafval_3'],
                     name='Metal',
                 ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['GlasPapierHoutKunststofED_4'],
+                    name='Glass/paper/wood/plastic',
+                ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['DierlijkPlantaardigAfval_5'],
+                    name='Animal/vegetable',
+                ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['GemengdAfval_6'],
+                    name='Mixed',
+                ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['Slib_7'],
+                    name='Sludge',
+                ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['MineralenSteenachtigAfval_8'],
+                    name='Rocks/minerals',
+                ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['OverigNietChemischAfval_9'],
+                    name='Other not chemical',
+                ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['ChemischAfval_10'],
+                    name='Chemical',
+                ),
             ],
             'layout': go.Layout(
                 xaxis={'visible': False},
