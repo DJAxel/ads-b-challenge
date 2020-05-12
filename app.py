@@ -124,9 +124,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
             'layout': go.Layout(
                 title='Pre-processing of waste in Dutch recycling companies',
                 xaxis={'title': 'Year', 'range': [2004, 2016]},
-                yaxis={'title': 'Supplied materials (× 1000 tonnes)'},
-                xaxis_type='category',
-                yaxis_type="log",
+                yaxis={'title': 'Supplied materials (× 1000 tonnes)', 'type': 'log'},
                 height=600,
                 annotations=[
                     {
