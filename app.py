@@ -89,10 +89,11 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
         id='basic_drinking_water_access_2017',
         figure={
             'data': [
-                go.Bar(
-                    x=water_data_sorted['Country'],
-                    y=water_data_sorted[u'2017; Population using at least basic drinking-water services (%); Total'],
-                )
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['Metaalafval_3'],
+                    name='Metal',
+                ),
             ],
             'layout': go.Layout(
                 xaxis={'visible': False},
