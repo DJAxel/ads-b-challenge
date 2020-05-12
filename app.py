@@ -73,21 +73,14 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
                 style=styles['paragraph'],
             ),
             html.H2(
-                children='Water',
+                children='Recycling',
                 style=styles['h2'],
             ),
             html.P(
-                children='Water is an important resource because all forms of life we know depend on it. The globe’s surface is covered in water for about 71% (United States Geological Survey, n.d.) , but of all water available, only less than 3% is fresh and drinkable. To top it off, 2.5 percenatge points of that is frozen in the artantica (United Nations, 2019). Water should therefor be used sparsely and recycled where possible.'
-            ),
-            html.H3(
-                children='Fresh drinking water',
-                style=styles['h3'],
+                children='So what kind of garbage is being collected and seperated and in what propotions does this happen? It’s hard to compare this over multiple countries in one graph as different countries combine different sorts of waste together. Looking at just the Netherlands we can see that the most collected category is ‘rocks and minerals’ by a long mile. The amount of metal waste is about the same as ‘glas/paper/wood/plastic’. Then at the lower end, we have animal/vegetable waste, mixed waste and   other non-chemical waste. Sludge and chemical waste have both taken a massive dive between 2006-2008 and 2012-2014 respectively. The sludge has been stable for a few years now, but it’s to soon to tell if this will be the same case for chemical waste as well.'
             ),
             html.P(
-                children='The most important water is the water that we drink in order to keep us hydrated. “Contaminated water and poor sanitation are linked to transmission of diseases such as cholera, diarrhoea, dysentery, hepatitis A, typhoid, and polio. Absent, inadequate, or inappropriately managed water and sanitation services expose individuals to preventable health risks.” (World Health Organization: WHO, 2019)'
-            ),
-            html.P(
-                children='In the graph below are the percentage of people that had access to at least basic drinking-water services in 2017, that is “an improved drinking-water source within a round trip of 30 minutes to collect water” (World Health Organization: WHO, 2019). Most countries are doing fine, but in some countries as low as only 40% had access to these basic services. In total, 90% of the global population had access to basic drinking-water services in 2017.'
+                children='Keep in mind that the following graph has a logarithmic scale due to the fact that the rocks and minerals have much higher values than the other types of waste.'
             ),
         ],
         style=styles['textContainer'],
