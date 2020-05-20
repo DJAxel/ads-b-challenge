@@ -78,7 +78,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
         style=styles['textContainer'],
     ),
     dcc.Graph(
-        id='',
+        id='preprocessing_waste_dutch_recycling_companies_components',
         figure={
             'data': [
                 go.Scatter(
@@ -155,8 +155,77 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
         style=styles['textContainer'],
     ),
     dcc.Graph(
-        id='preprocessing_waste_dutch_recycling_companies_components',
-        figure=px.scatter(recycling_NL, x="Perioden", y="TotaalAanvoerAfval_1", trendline="ols"),
+        id='preprocessing_waste_dutch_recycling_companies_total',
+        figure=px.scatter(recycling_NL, x="Perioden", y="TotaalAanvoerAfval_1", trendline="ols")
+            .update_layout(
+                title="Total amount of supplied waste for recycling in the Netherlands",
+                xaxis={'title': 'Year'},
+                yaxis={'title': 'Supplied materials (× 1000 tonnes)'},
+                annotations=[
+                    {
+                        'x': 1,
+                        'y': -0.14,
+                        'text': 'Source: CBS',
+                        'showarrow': False,
+                        'xref': 'paper',
+                        'yref': 'paper',
+                        'xanchor': 'right',
+                        'yanchor': 'auto',
+                        'xshift': 0,
+                        'yshift': 0,
+                        'font': {'size': 15},
+                    }
+                ]
+            ),
+        style=styles['graphs']
+    ),
+    html.Div(
+        children=[
+            html.P(
+                children='Another positive trend can be seen when looking at what happened with the waste after it has been collected for recycling. Some of this waste will still get burned (orange line), altough this amount is relatively low and has been stable over the last two decades. On the other side, there is a great increase as of 2006 from waste used for useful applications (green line).'
+            )
+        ],
+        style=styles['textContainer'],
+    ),
+    dcc.Graph(
+        id='preprocessing_waste_dutch_recycling_companies_after',
+        figure={
+            'data': [
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['NuttigeToepassing_14'],
+                    name='Useful applications',
+                    line = {'color': 'rgb(44, 160, 44)'},
+                ),
+                go.Scatter(
+                    x=recycling_NL['Perioden'],
+                    y=recycling_NL['Verbranden_15'],
+                    name='Burned',
+                    line = {'color': 'rgb(255, 127, 14)'},
+                ),
+            ],
+            'layout': go.Layout(
+                title='Processing of waste supplied for recycling',
+                xaxis={'title': 'Year'},
+                yaxis={'title': 'Waste (× 1000 tonnes)'},
+                height=600,
+                annotations=[
+                    {
+                        'x': 1,
+                        'y': -0.1,
+                        'text': 'Source: CBS',
+                        'showarrow': False,
+                        'xref': 'paper',
+                        'yref': 'paper',
+                        'xanchor': 'right',
+                        'yanchor': 'auto',
+                        'xshift': 0,
+                        'yshift': 0,
+                        'font': {'size': 15},
+                    }
+                ]
+            )
+        },
         style=styles['graphs']
     ),
     html.Div(
