@@ -1,6 +1,7 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import plotly.express as px
 
 # from dash.dependencies import Input, Output
 import pandas as pd
@@ -77,7 +78,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
         style=styles['textContainer'],
     ),
     dcc.Graph(
-        id='basic_drinking_water_access_2017',
+        id='',
         figure={
             'data': [
                 go.Scatter(
@@ -143,6 +144,19 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
                 ]
             )
         },
+        style=styles['graphs']
+    ),
+    html.Div(
+        children=[
+            html.P(
+                children='When looking at the total amount of waste collected for recycling in the Netherlands, there is a slightly positive trendline visible. The amount of waste supplied to companies for recycling in the Netherlands has steadily increased between 1998 and 2006, but made an equally stable decrease between 2006 and 2014. In 2016, the amount of supplied waste increased a little again.'
+            )
+        ],
+        style=styles['textContainer'],
+    ),
+    dcc.Graph(
+        id='preprocessing_waste_dutch_recycling_companies_components',
+        figure=px.scatter(recycling_NL, x="Perioden", y="TotaalAanvoerAfval_1", trendline="ols"),
         style=styles['graphs']
     ),
     html.Div(
