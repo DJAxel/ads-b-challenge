@@ -18,6 +18,24 @@ server = app.server
 recycling_NL = pd.read_csv('./data/Aanvoer,_verwerking_van_afval_bij_recyclingbedrijven_Nederland_1996-2016.csv', sep=';')
 recycling_NL_melted = pd.melt(recycling_NL, ['Perioden'], ['Metaalafval_3', 'GlasPapierHoutKunststofED_4', 'DierlijkPlantaardigAfval_5', 'GemengdAfval_6', 'Slib_7', 'MineralenSteenachtigAfval_8', 'OverigNietChemischAfval_9', 'ChemischAfval_10'])
 
+# UN Data: Total amount of municipal waste collected
+tot_municipal_waste = pd.read_csv('./data/UNdata_Total_amount_of_municipal_waste_collected_worldwide_1990-2016.csv', encoding = "ISO-8859-1")
+tot_municipal_waste['Value'] = tot_municipal_waste['Value'] * 1000000
+tot_municipal_waste['Unit'] = 'kg'
+
+world_pop = pd.read_csv('./data/world_population_altered.csv', delimiter=';')
+columns = list(world_pop)
+columns = columns[columns.index('y1990'):columns.index('y2016')+1] # List of all columns we need: 1990 - 2016
+wp_melted = pd.melt(world_pop, id_vars=['Country_Name'], value_vars=columns, var_name='Year', value_name='population') #unpivot (melt) wp
+wp_melted['Year'] = wp_melted['Year'].str[1:] # Remove y prefix from years
+wp_melted['Year'] = pd.to_numeric(wp_melted['Year']) # convert Year to Int64
+wp_melted['population'] = wp_melted['population'] * 1000 # convert to total amount of inhabitants
+
+tot_municipal_waste = pd.merge(tot_municipal_waste, wp_melted, how='inner', left_on=['Year', 'Country or Area'], right_on=['Year', 'Country_Name'])
+tot_municipal_waste['value_per_capita'] = tot_municipal_waste['Value'] / tot_municipal_waste['population']
+tot_municipal_waste_grouped = tot_municipal_waste.groupby('Year', as_index = True).mean()
+
+
 ########################## LAYOUT ##########################
 colors = {
     'background': '#FFF',
@@ -149,7 +167,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
     html.Div(
         children=[
             html.P(
-                children='When looking at the total amount of waste collected for recycling in the Netherlands, there is a slightly positive trendline visible. The amount of waste supplied to companies for recycling in the Netherlands has steadily increased between 1998 and 2006, but made an equally stable decrease between 2006 and 2014. In 2016, the amount of supplied waste increased a little again.'
+                children='When looking at the total amount of waste collected for recycling in the Netherlands, there is a slightly positive trendline visible. This linear trend doesn’t say very much though, as the actual trend is fluctuating and R² is close to 0.14. The amount of waste supplied to companies for recycling in the Netherlands has steadily increased between 1998 and 2006, but made an equally stable decrease between 2006 and 2014. In 2016, the amount of supplied waste increased a little again.'
             )
         ],
         style=styles['textContainer'],
@@ -230,6 +248,57 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
     ),
     html.Div(
         children=[
+            html.P(
+                children='This detailed information of seperated waste streams and what happened to the collected waste is not easy to project n a worldwide scale; Every country measures these values differently. The total amount of waste is one of the measures that is easily comparable though, and looking at the amount of waste per person, it’s easy to see how much materials humans have been consuming over the past years.'
+            ),
+            html.P(
+                children='Let’s be honest: it’s not very feasable that the average annual amount of waste per person is about half a kilogram, so more data is needed to show a reliable output. There was no time to sort this out however, so I added the graph anyway. I also didn’t find an explanation for the two outliers in 2013 and 2015 yet.'
+            ),
+        ],
+        style=styles['textContainer'],
+    ),
+    dcc.Graph(
+        id='municipal_waste_footprint_per_capita',
+        figure={
+            'data': [
+                go.Scatter(
+                    x=tot_municipal_waste_grouped.index,
+                    y=tot_municipal_waste_grouped['value_per_capita'],
+                    name='Waste per capita',
+                ),
+            ],
+            'layout': go.Layout(
+                title='Worldwide waste per capita',
+                xaxis={'title': 'Year'},
+                yaxis={'title': 'Waste per capita (kg)', 'type': 'log'},
+                height=600,
+                annotations=[
+                    {
+                        'x': 1,
+                        'y': -0.1,
+                        'text': 'Source: United Nations',
+                        'showarrow': False,
+                        'xref': 'paper',
+                        'yref': 'paper',
+                        'xanchor': 'right',
+                        'yanchor': 'auto',
+                        'xshift': 0,
+                        'yshift': 0,
+                        'font': {'size': 15},
+                    }
+                ]
+            )
+        },
+        style=styles['graphs']
+    ),
+    html.Div(
+        children=[
+            html.P(
+                children='In conclusion, it’s hard to say how the world is doing when every country is using it’s own methods of measuring and there are so many factors at stake. Comparing data from the same country works very well, as the same context applies to (almost) all data. Zooming out get’s more and more difficult.'
+            ),
+            html.P(
+                children='It looks like recycling levels go up slightly since a few years now, and the total amount of waste – although probably not showing the right absolute amount – shows a small decreasing trend as well. The best way to make sure of that however remains taking our own responsibility, by recycling, repairing, buying second hand and boycotting products with lots of hazardous material or unnecesary packaging.'
+            ),
         ],
         style=styles['textContainer'],
     ),
