@@ -252,7 +252,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
                 children='This detailed information of seperated waste streams and what happened to the collected waste is not easy to project n a worldwide scale; Every country measures these values differently. The total amount of waste is one of the measures that is easily comparable though, and looking at the amount of waste per person, it’s easy to see how much materials humans have been consuming over the past years.'
             ),
             html.P(
-                children='Let’s be honest: it’s not very feasable that the average annual amount of waste per person is about half a kilogram, so more data is needed to show a reliable output. There was no time to sort this out however, so I added the graph anyway. I also didn’t find an explanation for the two outliers in 2013 and 2015 yet.'
+                children='Let’s be honest: it’s not very feasable that the average annual amount of waste per person is about half a kilogram, so more data is needed to show a reliable output. There was no time to sort this out however, so I added the graph anyway. I also didn’t find an explanation for the two outliers in 2013 and 2015 yet. Mind the y-axis has a logarithmic scale once again.'
             ),
         ],
         style=styles['textContainer'],
